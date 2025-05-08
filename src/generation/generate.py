@@ -1,7 +1,7 @@
 import os, sys
 import pandas as pd
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 import fire, time
 from pathlib import Path
 from utils import get_prompt
@@ -29,11 +29,14 @@ def main(
 			total_mem_gib = total_mem / (1024 ** 3)
 			max_memory[i] = f"{total_mem_gib:.0f}GiB"
 
+		quant_config = BitsAndBytesConfig(load_in_8bit=True)
+
 		model = AutoModelForCausalLM.from_pretrained(
 			model_name,
 			device_map="auto",
 			torch_dtype=torch.bfloat16,
-			max_memory=max_memory
+			max_memory=max_memory,
+			quant_config=quant_config
 		)
 
 	data = pd.read_json(os.path.join(input_path, file_name), lines=True)
