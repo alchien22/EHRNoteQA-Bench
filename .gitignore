@@ -161,5 +161,6 @@ cython_debug/
 
 
 */discharge.csv.gz
+discharge.csv
 
 .DS_Store

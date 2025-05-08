@@ -8,7 +8,6 @@ from utils import get_prompt
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 def main(
-	ckpt_dir: str, # "Folder path to target model for evaluation. You may put an empty string when evaluating gpt series models."
 	model_name: str, # "Name of target model for evaluation."
 	eval_method: str, # "Evaluation method (openended or multichoice)"
 	input_path: str, # "Folder path to the processed EHRNoteQA data."
@@ -21,10 +20,7 @@ def main(
 		
 	else:
 		tokenizer = AutoTokenizer.from_pretrained(
-			os.path.join(ckpt_dir, model_name),
-			cache_dir=os.path.join(ckpt_dir, model_name),
-			trust_remote_code=True,
-			local_files_only=True
+			model_name
 		)
 
 		max_memory = {}
@@ -34,11 +30,8 @@ def main(
 			max_memory[i] = f"{total_mem_gib:.0f}GiB"
 
 		model = AutoModelForCausalLM.from_pretrained(
-			os.path.join(ckpt_dir, model_name),
-			cache_dir=os.path.join(ckpt_dir, model_name),
-			local_files_only=True,
+			model_name,
 			device_map="auto",
-			trust_remote_code=True,
 			torch_dtype=torch.bfloat16,
 			max_memory=max_memory
 		)
